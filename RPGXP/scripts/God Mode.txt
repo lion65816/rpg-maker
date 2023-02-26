@@ -1,0 +1,154 @@
+First add this line to Game_System:
+
+attr_accessor :god_mode
+
+Then add this line to Game_System:
+
+@god_mode = false
+
+Now replace the entire section after def maxhp with this:
+
+def base_maxhp
+if $game_system.god_mode
+  return 9999
+end
+return $data_actors[@actor_id].parameters[0, @level]
+ end
+ # -------------------------------------
+ def base_maxsp
+if $game_system.god_mode
+  return 9999
+end
+return $data_actors[@actor_id].parameters[1, @level]
+ end
+ # -------------------------------------
+ def base_str
+if $game_system.god_mode
+  return 999
+end
+n = $data_actors[@actor_id].parameters[2, @level]
+weapon = $data_weapons[@weapon_id]
+armor1 = $data_armors[@armor1_id]
+armor2 = $data_armors[@armor2_id]
+armor3 = $data_armors[@armor3_id]
+armor4 = $data_armors[@armor4_id]
+n += weapon != nil ? weapon.str_plus : 0
+n += armor1 != nil ? armor1.str_plus : 0
+n += armor2 != nil ? armor2.str_plus : 0
+n += armor3 != nil ? armor3.str_plus : 0
+n += armor4 != nil ? armor4.str_plus : 0
+return [[n, 1].max, 999].min
+ end
+ # -------------------------------------
+ def base_dex
+if $game_system.god_mode
+  return 999
+end
+n = $data_actors[@actor_id].parameters[3, @level]
+weapon = $data_weapons[@weapon_id]
+armor1 = $data_armors[@armor1_id]
+armor2 = $data_armors[@armor2_id]
+armor3 = $data_armors[@armor3_id]
+armor4 = $data_armors[@armor4_id]
+n += weapon != nil ? weapon.dex_plus : 0
+n += armor1 != nil ? armor1.dex_plus : 0
+n += armor2 != nil ? armor2.dex_plus : 0
+n += armor3 != nil ? armor3.dex_plus : 0
+n += armor4 != nil ? armor4.dex_plus : 0
+return [[n, 1].max, 999].min
+ end
+ # -------------------------------------
+ def base_agi
+if $game_system.god_mode
+  return 999
+end
+n = $data_actors[@actor_id].parameters[4, @level]
+weapon = $data_weapons[@weapon_id]
+armor1 = $data_armors[@armor1_id]
+armor2 = $data_armors[@armor2_id]
+armor3 = $data_armors[@armor3_id]
+armor4 = $data_armors[@armor4_id]
+n += weapon != nil ? weapon.agi_plus : 0
+n += armor1 != nil ? armor1.agi_plus : 0
+n += armor2 != nil ? armor2.agi_plus : 0
+n += armor3 != nil ? armor3.agi_plus : 0
+n += armor4 != nil ? armor4.agi_plus : 0
+return [[n, 1].max, 999].min
+ end
+ # -------------------------------------
+ def base_int
+if $game_system.god_mode
+  return 999
+end
+n = $data_actors[@actor_id].parameters[5, @level]
+weapon = $data_weapons[@weapon_id]
+armor1 = $data_armors[@armor1_id]
+armor2 = $data_armors[@armor2_id]
+armor3 = $data_armors[@armor3_id]
+armor4 = $data_armors[@armor4_id]
+n += weapon != nil ? weapon.int_plus : 0
+n += armor1 != nil ? armor1.int_plus : 0
+n += armor2 != nil ? armor2.int_plus : 0
+n += armor3 != nil ? armor3.int_plus : 0
+n += armor4 != nil ? armor4.int_plus : 0
+return [[n, 1].max, 999].min
+ end
+ # -------------------------------------
+ def base_atk
+if $game_system.god_mode
+  return 9999999
+end
+weapon = $data_weapons[@weapon_id]
+return weapon != nil ? weapon.atk : 0
+ end
+ # -------------------------------------
+ def base_pdef
+if $game_system.god_mode
+  return 9999999
+end
+weapon = $data_weapons[@weapon_id]
+armor1 = $data_armors[@armor1_id]
+armor2 = $data_armors[@armor2_id]
+armor3 = $data_armors[@armor3_id]
+armor4 = $data_armors[@armor4_id]
+pdef1 = weapon != nil ? weapon.pdef : 0
+pdef2 = armor1 != nil ? armor1.pdef : 0
+pdef3 = armor2 != nil ? armor2.pdef : 0
+pdef4 = armor3 != nil ? armor3.pdef : 0
+pdef5 = armor4 != nil ? armor4.pdef : 0
+return pdef1 + pdef2 + pdef3 + pdef4 + pdef5
+ end
+ # -------------------------------------
+ def base_mdef
+if $game_system.god_mode
+  return 9999999
+end
+weapon = $data_weapons[@weapon_id]
+armor1 = $data_armors[@armor1_id]
+armor2 = $data_armors[@armor2_id]
+armor3 = $data_armors[@armor3_id]
+armor4 = $data_armors[@armor4_id]
+mdef1 = weapon != nil ? weapon.mdef : 0
+mdef2 = armor1 != nil ? armor1.mdef : 0
+mdef3 = armor2 != nil ? armor2.mdef : 0
+mdef4 = armor3 != nil ? armor3.mdef : 0
+mdef5 = armor4 != nil ? armor4.mdef : 0
+return mdef1 + mdef2 + mdef3 + mdef4 + mdef5
+end
+end
+
+Finally, use the Cheats Input script and add this to top:
+
+class Game_Party
+ def recover_all
+@actors.each {|a| a.recover_all}
+ end
+end
+
+Lastly, add the following code to the cheats:
+
+elsif @cheatword == "godmode" #edit this to whatever you want for the god mode code
+$game_system.god_mode = true
+$game_party.recover_all
+
+That's all there is to it. You will now have God Mode, and (unless you have a script that has a damage limit) you will be doing around the...I think it's...1 BILLION points of damage...

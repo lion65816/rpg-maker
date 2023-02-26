@@ -1,0 +1,104 @@
+Ok, basically, you can change the x, y, ox, oy of the window to your leasure, so you can get it where you want, along with the contents of the window. I must credit SephirothSpawn here for his tutorial on bars.
+
+If you use this, please credit BOTH of us.
+
+ 
+
+Now that credits are over, here is the instructions:
+
+Place this script anywhere below Game_Party, but above Main, then to add to the percentage, do:
+
+ 
+
+$game_party.completion_add(x)
+
+ 
+
+Where 'x' is 0.1 percent. To add 1 percent, you would have to make 'x' 10.
+
+ 
+
+Code:
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  Game_Party
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class Game_Party
+ alias leon_gp_completion_initialize initialize
+
+ attr_accessor :completion
+ attr_accessor :completion1
+
+ def initialize
+leon_gp_completion_initialize
+@completion = 0
+@completion1 = 0
+ end
+
+ def completion_add(x)
+@completion += (x)
+if @completion >= 10
+  @completion1 += 1
+  @completion -= 10
+  return
+end
+ end
+
+end
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#  Window_Base
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+class Window_Base < Window
+ def draw_completion_bar(x, y, min, max, width = 152, height = 6,
+  bar_color = Color.new(60, 130, 60, 255), end_color = Color.new(180, 250, 180, 255))
+for i in 0..height
+  self.contents.fill_rect(x + i, y + height - i, width + 1, 1, Color.new(50, 50, 50, 255))
+end
+for i in 1..(height - 1)
+  r = 100 * (height - i) / height + 0 * i / height
+  g = 100 * (height - i) / height + 0 * i / height
+  b = 100 * (height - i) / height + 0 * i / height
+  a = 255 * (height - i) / height + 255 * i / height
+  self.contents.fill_rect(x + i, y + height - i, width, 1, Color.new(r, b, g, a))
+end
+for i in 1..( (min.to_f / max.to_f) * width - 1)
+  for j in 1..
+
+40;height - 1)
+	r = bar_color.red * (width - i) / width + end_color.red * i / width
+	g = bar_color.green * (width - i) / width + end_color.green * i / width
+	b = bar_color.blue * (width - i) / width + end_color.blue * i / width
+	a = bar_color.alpha * (width - i) / width + end_color.alpha * i / width
+	self.contents.fill_rect(x + i + j, y + height - j, 1, 1, Color.new(r, g, b, a))
+  end
+end
+ end
+end
+
+
+#----------------------------------------------------------------------
+#  Window_GameCompletion
+#----------------------------------------------------------------------
+
+class Window_GameCompletion < Window_Base
+
+ def initialize
+super(346, 420, 294, 60)
+self.contents = Bitmap.new(width - 32, height - 32)
+self.contents.font.name = $defaultfonttype
+self.contents.font.size = $defaultfontsize
+ end
+
+ def update
+self.contents.clear
+self.contents.font.color = system_color 
+self.contents.draw_text(0, 0, 440, 32, "% Complete:")
+self.contents.font.color = normal_color
+percent = $game_party.completion1 + ($game_party.completion * 0.1)
+draw_completion_bar(108, 24, percent, 100, 140, 6, Color.new(60, 60, 60, 255), Color.new(200, 200, 200, 255))
+self.contents.draw_text(148, 0, 102, 32, $game_party.completion1.to_s + "." + $game_party.completion.to_s + "%", 2)
+ end
+
+end

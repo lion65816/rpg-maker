@@ -1,0 +1,648 @@
+#==============================================================================
+# ■ XP-RGSS-4 閃きシステム [Ver.8.1.1]   by Claimh
+#------------------------------------------------------------------------------
+# 再定義：Game_Battler#skill_can_use?
+#         Scene_Battle#make_skill_action_result
+#==============================================================================
+
+module SysFlash
+  module_function
+  #------------------------------------------------------------------------
+  # ● 併用化処理
+  # 連続攻撃系＋閃き無効化処理系のスクリプトと併用時の無効化処理を包含する
+  #------------------------------------------------------------------------
+  def can_flash?(battler)
+    #スイッチで抑制する例
+    # return false if $game_switches[id]
+    #※仕様※ 連続攻撃系スクリプトと併用する場合、連続攻撃中は閃かない
+    # 追尾攻撃との併用時
+    if defined?(ExtraAttack)
+      return false if $scene.add_atk_exercise
+    end
+    # スキル連撃との併用時
+    if defined?(ExtraSkill)
+      return false if $scene.skill_chase_exercise
+    end
+    # 一人連携との併用時
+    if defined?(SkillLink)
+      return false if $scene.skill_linked
+    end
+    # 強制アクション時は閃き不可
+    return false if battler.current_action.forcing
+    # 閃き動作中は不可
+    return false if battler.flash_flg
+    # 閃き可能
+    return true
+  end
+  #------------------------------------------------------------------------
+  # ● スキル派生可能？
+  #------------------------------------------------------------------------
+  def can_derive?(skill_id)
+    return false unless DERIVE_FLASH
+    return false if NOT_FLASH_SKILL.include?(skill_id)
+    return true
+  end
+  #------------------------------------------------------------------------
+  # ● スキルからの通常閃き可能？
+  #------------------------------------------------------------------------
+  def can_skill_normal?(skill_id)
+    return false unless SKILL_NORMAL_FLASH
+    return false if NOT_FLASH_SKILL.include?(skill_id)
+    return false if ONLY_DERIVE_SKILL.include?(skill_id)
+    return true
+  end
+  #------------------------------------------------------------------------
+  # ● 設定情報をクラス化   熟練度による閃き制限
+  #------------------------------------------------------------------------
+  class AttrFlash
+    attr_reader:condition  # 条件
+    def initialize(actor, data)
+      @actor = actor
+      @condition = []
+      for d in data
+        @condition.push(AttrFlashCondition.new(d))
+      end
+    end
+    # 熟練度制限の判定
+    def judgement
+      for c in @condition
+        # アクターの熟練度が足りてない
+        if actor.attr[c.attr_id].level < c.level
+          return false
+        end
+      end
+      return true
+    end
+    class AttrFlashCondition
+      attr_reader:attr_id  # 属性ID
+      attr_reader:level    # 必要Lv
+      def initialize(data)
+        @attr_id = data[0]
+        @level   = data[1]
+      end
+    end
+  end
+  #------------------------------------------------------------------------
+  # ● 設定情報をクラス化   熟練度による閃き制限
+  #------------------------------------------------------------------------
+  def get_skill_lv_limitter(skill_id)
+    return 0 if SKILL_LV_LIMIT[skill_id].nil?
+    return SKILL_LV_LIMIT[skill_id]
+  end
+################################################################################
+  #--------------------------------------------------------------------------
+  # ● 通常攻撃時の閃き判定(前処理)
+  #--------------------------------------------------------------------------
+  def normal_flash(battler)
+    return unless can_flash?(battler)
+    return if battler.current_action.basic != 0
+    # 通常閃き
+    if NORMAL_FLASH and battler.is_a?(Game_Actor)
+      SysFlash.sys_flash_main(TYPE_NORMAL, battler)
+    end
+    # エネミー閃き
+    if ENEMY_NORMAL and battler.is_a?(Game_Enemy)
+      SysFlash.sys_flash_main(TYPE_ENEMY, battler)
+    end
+  end
+  #--------------------------------------------------------------------------
+  # ● スキル使用時の閃き判定(前処理)
+  #--------------------------------------------------------------------------
+  def skill_flash(battler)
+    # スキルを取得
+    skill_id = battler.current_action.skill_id
+    # 既に閃き状態のときや閃き対象外のスキル使用時は判定しない
+    if can_flash?(battler)
+      # アクター
+      if battler.is_a?(Game_Actor)
+        if can_derive?(skill_id)
+          # 使用回数カウント(使用回数を使用する場合のみ)
+          battler.skill_count(skill_id) if DEREIVE_USE
+          # 派生閃きメイン処理へ
+          sys_flash_main(TYPE_DERIVE, battler)
+          if battler.flash_flg   # 閃き成功
+            # スキルから閃いた場合、スキル使用回数のカウントはしない
+            battler.skill_recount(skill_id) if DEREIVE_USE
+          # スキル使用時通常閃き：スキル派生閃き失敗時に適応される
+          elsif can_skill_normal?(skill_id)
+            sys_flash_main(TYPE_NORMAL, battler)
+            if battler.flash_flg   # 閃き成功
+              # スキルから閃いた場合、スキル使用回数のカウントはしない
+              battler.skill_recount(skill_id) if DEREIVE_USE
+            end
+          end
+        # スキル使用時通常閃き：スキル派生しない場合はここで。
+        elsif can_skill_normal?(skill_id)
+          sys_flash_main(TYPE_NORMAL, battler)
+        end
+      # エネミー閃き
+      elsif ENEMY_SKILL and battler.is_a?(Game_Enemy)
+        sys_flash_main(TYPE_ENEMY, battler)
+      end
+    end
+  end
+  #--------------------------------------------------------------------------
+  # ● 閃きシステム メイン処理
+  #--------------------------------------------------------------------------
+  def sys_flash_main(type, battler)
+    # 閃き対象のスキル群を取得
+    case type
+    when TYPE_NORMAL;  f_skill = divide_normal(battler)
+    when TYPE_DERIVE;  f_skill = divide_derive(battler, battler.current_action.skill_id)
+    when TYPE_ENEMY;   f_skill = divide_enemy(battler)
+    else; return
+    end
+    return if f_skill.nil? or !f_skill.can_flash # 対象なし
+    battler.flash_flg = true # 閃き有効
+    # 閃き判定
+    if battler.is_a?(Game_Actor)
+      battler.learn_skill(f_skill.skill_id)  # 一旦、習得させる
+      unless jugde_flash_actor(type, battler, f_skill)
+        battler.forget_skill(f_skill.skill_id) # スキル忘却
+        battler.flash_flg = false # 閃き無効
+        return
+      end
+    else
+      # 既に閃き済みでもスキル行動ならそのまま発動させる
+      if battler.skill_learn?(f_skill.skill_id) and battler.current_action.kind == 1
+        battler.current_action.skill_id = f_skill.skill_id
+        battler.flash_flg = false # 閃き無効
+        return
+      end
+      unless jugde_flash_enemy(battler, f_skill)
+        battler.flash_flg = false # 閃き無効
+        return
+      end
+      battler.learn_skill(f_skill.skill_id)  # 習得させる
+    end
+    # 発動スキル変更
+    battler.current_action.skill_id = f_skill.skill_id
+  end
+  #--------------------------------------------------------------------------
+  # ● 閃き判定 ：通常閃き & スキル派生 共通処理
+  #--------------------------------------------------------------------------
+  def jugde_flash_actor(type, actor, flash)
+    # スキルを使用できるか？
+    return false unless actor.skill_can_use?(flash.skill_id)
+    # スキル派生：習得条件に適合しているか？
+    return false if type == TYPE_DERIVE and (flash.judgement == false)
+
+    skill_id = actor.current_action.skill_id
+    if defined?(SysUpdate)  # 熟練度システムがある場合のみ
+      # 熟練度による閃き制限を使用する
+      if USE_ATTR_LV_LIMER and !ATTR_LIMIT_SKILL[flash.skill_id].nil?
+        limitter = AttrFlash.new(ATTR_LIMIT_SKILL[flash.skill_id])
+        # 熟練度Lv未到達のため閃かない
+        return false unless limitter.judgement
+      end
+      # 攻撃属性が得意・不得意かによって確率を変動させる
+      if USE_ATK_ATTR_UP
+        case type
+        when TYPE_DERIVE; attr_id = SysUpdate.skill_attr(actor, skill_id).id
+        when TYPE_NORMAL; attr_id = SysUpdate.atk_attr(actor).id
+        end
+        case actor.attr[attr_id].taste
+        when SysUpdate::ATTR_GOOD; flash.prob += ATTR_PRO_UP
+        when SysUpdate::ATTR_BAD;  flash.prob -= ATTR_PRO_UP
+        end
+      end
+      # 閃き対象の攻撃属性が得意・不得意かによって確率を変動させる
+      if USE_FLASH_ATTR_UP
+        case actor.attr[SysUpdate.skill_attr(actor, flash.skill_id).id].taste
+        when SysUpdate::ATTR_GOOD; flash.prob += ATTR_PRO_UP
+        when SysUpdate::ATTR_BAD;  flash.prob -= ATTR_PRO_UP
+        end
+      end
+    end
+    if type == TYPE_DERIVE and defined?(SkillUpdate)  # スキルアップデートがある場合のみ
+      # スキルレベルによる閃き制限
+      if USE_SKILL_LV_LIMER
+        limitter = get_skill_lv_limitter(skill_id)
+        return false if actor.skill[skill_id].level < limitter
+      end
+      # スキルレベルによる閃き率上昇
+      if USE_SKILL_LV_UP and type == TYPE_DERIVE
+        flash.prob += actor.skill[skill_id].level * SKILL_LV_PRO_UP
+      end
+    end
+    # 強い敵と遭遇したときは閃き率上昇
+    if USE_DIF_LV_UP and defined?(Enemy_Level)
+      enemy_lv = 0
+      for enemy in $game_troop.enemies
+        enemy_lv = enemy.level if enemy_lv < enemy.level
+      end
+      # 設定したレベル差以上あれば確率UP
+      if (enemy_lv - actor.level) >= DIF_LEVEL
+        flash.prob += ENEMY_LEVEL_PRO_UP
+      end
+    end
+    # ピンチのときは閃き率上昇
+    if USE_PINCH_UP and actor.hp < (actor.maxhp * PINCH_HP_RATE / 100).truncate
+      flash.prob += PINCH_PRO_UP
+    end
+
+    # 最終判定
+    return flash.exe_prob
+  end
+#----------------------------------------------------------------------------
+# ■ 通常閃き
+#----------------------------------------------------------------------------
+  #------------------------------------------------------------------------
+  # ● 設定情報をクラス化   通常閃き & エネミー閃き 共通処理
+  #------------------------------------------------------------------------
+  class NormalFlash
+    def initialize(battler, data)
+      @battler = battler
+      @set = []
+      for d in data
+        # 対象に入れるかを先読みしてから入れる
+        @set.push(NormalFlashData.new(d)) if can_include?(d[0])
+      end
+    end
+    def can_include?(skill_id)  # 閃き対象に入れるか？
+      if @battler.is_a?(Game_Actor) and @battler.skill_learn?(skill_id)
+        return false  # アクターなら習得済みは入れない
+      end
+      if @battler.current_action.kind == 1 # スキル使用時の通常閃き
+        use_skill   = $data_skills[@battler.current_action.skill_id]
+        flash_skill = $data_skills[skill_id]
+        # 威力の落ちるスキルは対象にしない
+        return false if DISABLE_PW_DOWN and use_skill.power.abs > flash_skill.power.abs
+        if ONLY_SAME_ELEMENT # 同一属性のスキル以外は対象にしない
+          use_elements   = use_skill.element_set.dup
+          flash_elements = flash_skill.element_set.dup
+          for element in UNCHECK_ELEMENTS
+            use_elements.delete(element)
+            flash_elements.delete(element)
+          end
+          element_ok = use_elements.empty?
+          for element in flash_elements
+            if use_elements.include?(element)
+              element_ok = true
+              break
+            end
+          end
+          return false unless element_ok
+        end
+      end
+      return true
+    end
+    def randum_set    # ランダム抽出
+      return @set[rand(@set.size)]
+    end
+    class NormalFlashData
+      attr_reader  :skill_id  # スキルID
+      attr_accessor:prob      # 確率
+      def initialize(data)
+        @skill_id = data[0]
+        @prob     = data[1]
+      end
+      def can_flash
+        return true
+      end
+      def exe_prob      # 確率OK?
+        return rand(10000)/100.0 < @prob ? true : false
+      end
+      # 条件適合判定
+      def judgement
+        return true
+      end
+    end
+  end
+#----------------------------------------------------------------------------
+# ■ Flash System　スキル派生版
+#----------------------------------------------------------------------------
+  #------------------------------------------------------------------------
+  # ● 設定情報をクラス化   スキル派生
+  #------------------------------------------------------------------------
+  class DeriveFlash
+    attr_accessor:prob      # 確率
+    attr_reader  :condition # 閃き条件
+    attr_reader  :skill_id  # スキルID
+    attr_reader  :can_flash # 閃き可能？
+    def initialize(actor, data, skill_id)
+      @actor = actor
+      @use_skill_id = skill_id
+      @can_flash = false
+      set_data = []
+      # 派生は先にランダム決定する
+      for d in data
+        set_data.push(d) if can_include?(d[2])
+      end
+      rand_set = set_data[rand(set_data.size)]
+      # 
+      return if rand_set.nil? # 習得スキルなしなら終わり
+      @can_flash = true
+      @prob = rand_set[0]
+      @condition = rand_set[1]
+      @skill_id = rand_set[2]
+    end
+    def can_include?(skill_id)  # 閃き対象に入れるか？
+      return false if @actor.skill_learn?(skill_id) # 習得済みは含めない
+      return true
+    end
+    # 条件適合判定
+    def judgement
+      return false unless @can_flash
+      return true if @condition.nil? # 条件なし
+      for skill in @condition
+        return false unless @actor.skill_learn?(skill)
+      end
+      return true
+    end
+    def exe_prob      # 確率OK?
+      return false unless @can_flash
+      if DEREIVE_USE
+        return @actor.skill_use[@use_skill_id] < @prob ? true : false
+      else
+        return rand(10000)/100.0 < @prob ? true : false
+      end
+    end
+  end
+#----------------------------------------------------------------------------
+# ■ エネミー閃き
+#----------------------------------------------------------------------------
+  #--------------------------------------------------------------------------
+  # ● エネミー 対象振り分け
+  #--------------------------------------------------------------------------
+  def divide_enemy(enemy)
+    flash_skills = E_FLASH[enemy.id]
+    # 空定義は無視する。
+    return nil if flash_skills.nil? or flash_skills.empty?
+    # 閃き対象がある場合はクラス化して返す
+    return NormalFlash.new(enemy, flash_skills.dup).randum_set
+  end
+  #--------------------------------------------------------------------------
+  # ● エネミー閃き　メイン処理
+  #--------------------------------------------------------------------------
+  def jugde_flash_enemy(enemy, flash)
+    # スキルを使用できるか？
+    return false unless enemy.skill_can_use?(flash.skill_id)
+    # 最終判定
+    return flash.exe_prob
+  end
+end
+
+
+#==============================================================================
+# ■ Game_Battler
+#==============================================================================
+class Game_Battler
+  attr_accessor   :flash_flg      # 閃きフラグ
+  #--------------------------------------------------------------------------
+  # ● オブジェクト初期化
+  #--------------------------------------------------------------------------
+  alias sys_flash_initialize initialize
+  def initialize
+    sys_flash_initialize
+    @flash_flg = false
+  end
+  #--------------------------------------------------------------------------
+  # ● スキルの使用可能判定 [再定義]
+  #     skill_id : スキル ID
+  #--------------------------------------------------------------------------
+  def skill_can_use?(skill_id)
+    flag = true
+    if defined?(SysFlash) and SysFlash::FLASH_COST and self.flash_flg
+      # 閃き時は SP/BPの判定はしない。
+    else
+      # SP が足りない場合は使用不可
+      if defined?(SkillUpdate) and self.is_a?(Game_Actor) and SkillUpdate::SP_COST_DOWN
+        flag = false if self.skill[skill_id].sp_cost > self.sp
+      elsif $data_skills[skill_id].sp_cost > self.sp
+        flag = false
+      end
+      if defined?(SysSkill_BP) and self.is_a?(Game_Actor) and $scene.is_a?(Scene_Battle)
+        # SP消費なしなら一旦trueにする
+        flag = true if !SysSkill_BP::BATTLE_SP_USE
+        # BP が足りない場合は使用不可
+        flag = false if self.bp < SysSkill_BP.bp_cost(skill_id)
+      end
+    end
+    return false unless flag  # SP/BPが足りない
+
+  # SP消費以外のその他の要因を再チェック[オリジナルからSP判定以外をコピー]
+    # 戦闘不能の場合は使用不可
+    return false if dead?
+    # 沈黙状態の場合、物理スキル以外は使用不可
+    return false if $data_skills[skill_id].atk_f == 0 and self.restriction == 1
+    # 使用可能時を取得
+    occasion = $data_skills[skill_id].occasion
+    # 戦闘中の場合：[常時] または [バトルのみ] なら使用可
+    return (occasion == 0 or occasion == 1) if $game_temp.in_battle
+    # 戦闘中ではない場合：[常時] または [メニューのみ] なら使用可
+    return (occasion == 0 or occasion == 2)
+  end
+end
+
+#==============================================================================
+# ■ Game_Actor
+#==============================================================================
+# スキル使用回数を使用する場合のみ有効。スキル派生なしなら不要パラメータ
+if SysFlash::DEREIVE_USE and SysFlash::DERIVE_FLASH
+class Game_Actor < Game_Battler
+  attr_accessor   :skill_use      # スキル使用回数
+  #--------------------------------------------------------------------------
+  # ● オブジェクト初期化
+  #--------------------------------------------------------------------------
+  alias sys_flash_init initialize
+  def initialize(actor_id)
+    sys_flash_init(actor_id)
+    @skill_use = []
+  end
+  #--------------------------------------------------------------------------
+  # ● スキル使用回数カウント
+  #--------------------------------------------------------------------------
+  def skill_count(skill_id)
+    @skill_use[skill_id] = @skill_use[skill_id].nil? ? 1 : @skill_use[skill_id] + 1
+  end
+  #--------------------------------------------------------------------------
+  # ● スキル使用回数カウント補正
+  #--------------------------------------------------------------------------
+  def skill_recount(skill_id)
+    @skill_use[skill_id] = @skill_use[skill_id].nil? ? 0 :
+                  (@skill_use[skill_id] == 0 ? 0 : @skill_use[skill_id] - 1)
+  end
+end
+end # SysFlash::DEREIVE_USE and SysFlash::DERIVE_FLASH
+
+#==============================================================================
+# ■ Game_Enemy
+#==============================================================================
+class Game_Enemy < Game_Battler
+  attr_reader   :skills                   # スキル
+  #--------------------------------------------------------------------------
+  # ● オブジェクト初期化
+  #--------------------------------------------------------------------------
+  alias sys_flash_init initialize
+  def initialize(troop_id, member_index)
+    sys_flash_init(troop_id, member_index)
+    @skills = []
+    for action in $data_enemies[@enemy_id].actions
+      @skills.push(action.skill_id) if action.kind == 1
+    end
+  end
+  #--------------------------------------------------------------------------
+  # ● スキルを覚える
+  #--------------------------------------------------------------------------
+  def learn_skill(skill_id)
+    if skill_id > 0 and not skill_learn?(skill_id)
+      @skills.push(skill_id)
+      @skills.sort!
+    end
+  end
+  #--------------------------------------------------------------------------
+  # ● スキルの習得済み判定
+  #--------------------------------------------------------------------------
+  def skill_learn?(skill_id)
+    return @skills.include?(skill_id)
+  end
+end
+
+
+#----------------------------------------------------------------------------
+# ■ Flash System　通常攻撃版
+#----------------------------------------------------------------------------
+class Scene_Battle
+  #--------------------------------------------------------------------------
+  # ● フレーム更新 (メインフェーズ ステップ 2 : アクション開始)
+  #--------------------------------------------------------------------------
+  alias update_phase4_step2_flash update_phase4_step2
+  def update_phase4_step2
+    @active_battler.flash_flg = false   # 閃き発動フラグ
+    @flash_skill_text = false
+    update_phase4_step2_flash
+  end
+  #--------------------------------------------------------------------------
+  # ● 基本アクション 結果作成
+  #--------------------------------------------------------------------------
+  alias make_basic_action_result_flash make_basic_action_result
+  def make_basic_action_result
+    SysFlash.normal_flash(@active_battler)
+    # 閃き成功時
+    if @active_battler.flash_flg
+      # 行動をスキルに変更
+      @active_battler.current_action.kind = 1
+      make_skill_action_result    # スキル処理を実行
+      return  # 通常攻撃は実行しない
+    end
+    make_basic_action_result_flash        # 原物
+  end
+#----------------------------------------------------------------------------
+# ■ Flash System　スキル派生版
+#----------------------------------------------------------------------------
+  #--------------------------------------------------------------------------
+  # ● スキルアクション 結果作成
+  #--------------------------------------------------------------------------
+  def make_skill_action_result
+    enable_cnt = true  # 閃き時には熟練度やスキルアップデートのカウントはしない
+    if defined?(SysFlash) # 閃き判定(エネミー閃き時を考慮するとこのタイミング)
+      SysFlash.skill_flash(@active_battler)
+      enable_cnt = false  if @active_battler.flash_flg
+    end
+    # スキルを取得
+    @skill = $data_skills[@active_battler.current_action.skill_id]
+    # 強制アクションでなければ
+    unless @active_battler.current_action.forcing
+      # SP 切れなどで使用できなくなった場合
+      unless @active_battler.skill_can_use?(@skill.id)
+        # アクション強制対象のバトラーをクリア
+        $game_temp.forcing_battler = nil
+        # ステップ 1 に移行
+        @phase4_step = 1
+        return
+      end
+    end
+    if enable_cnt # 閃いてないときだけ。
+      enable_attr_lvup = true
+      if defined?(SkillUpdate) and @active_battler.is_a?(Game_Actor) and SkillUpdate.can_update?(@active_battler)
+        old_level = @active_battler.skill[@skill.id].level
+        # スキル使用回数を加算
+        @active_battler.skill[@skill.id].use_cnt += 1
+        @actor_skill_lv_up = (old_level < @active_battler.skill[@skill.id].level ? true : false)
+        enable_attr_lvup = false if @actor_skill_lv_up
+      end
+      if defined?(SysUpdate) and @active_battler.is_a?(Game_Actor) and enable_attr_lvup
+        # 熟練度計算
+        SysUpdate.element_use_count(@active_battler, @skill.element_set)
+      end
+    end
+    # SP 消費
+    if defined?(SysFlash) and SysFlash::FLASH_COST and @active_battler.flash_flg
+      # 閃き時はSP消費なし
+    elsif defined?(SysSkill_BP) and !SysSkill_BP::BATTLE_SP_USE
+      # スキルBP制で戦闘中のSP消費なしなら何もしない
+    elsif defined?(SkillUpdate) and SkillUpdate::SP_COST_DOWN and @active_battler.is_a?(Game_Actor)
+      @active_battler.sp -= @active_battler.skill[@skill.id].sp_cost
+    else # 原型
+      @active_battler.sp -= @skill.sp_cost
+    end
+    # BP消費
+    if defined?(SysSkill_BP)
+      @active_battler.bp -= SysSkill_BP.bp_cost(@skill.id)
+    end
+    # ステータスウィンドウをリフレッシュ
+    @status_window.refresh
+    # ヘルプウィンドウにスキル名を表示
+    @help_window.set_text(@skill.name, 1)
+    # アニメーション ID を設定
+    @animation1_id = @skill.animation1_id
+    # アニメーション変化
+    if defined?(SkillUpdate) and SkillUpdate::USE_S_ANIME
+      @animation2_id = SkillUpdate.skill_anime(@skill, @active_battler)
+    else
+      @animation2_id = @skill.animation2_id
+    end
+    # コモンイベント ID を設定
+    @common_event_id = @skill.common_event_id
+    # 対象側バトラーを設定
+    set_target_battlers(@skill.scope)
+    miss_flag = true
+    # スキルの効果を適用
+    for target in @target_battlers
+      target.skill_effect(@active_battler, @skill)
+      miss_flag = false if target.damage != "Miss" # 一体でも命中ならOK.
+    end
+    if miss_flag and enable_cnt
+      # ミス時はカウント戻す
+      if defined?(SkillUpdate) and @active_battler.is_a?(Game_Actor) and SkillUpdate.can_update?(@active_battler)
+        @active_battler.skill[@skill.id].use_cnt -= 1
+        @actor_skill_lv_up = false
+      end
+      if defined?(SysUpdate) and @active_battler.is_a?(Game_Actor) and enable_attr_lvup
+        SysUpdate.element_use_recount(@active_battler, @skill.element_set)
+      end
+    end
+    # スキル名表示を閃きアニメーションの後にする
+    if defined?(SysFlash) and SysFlash::FLASH_SKILL_TEXT and @active_battler.flash_flg
+      @help_window.visible = false    # ヘルプ消去
+      @flash_skill_text = false       # 消去したことを記憶
+    end
+  end
+#----------------------------------------------------------------------------
+# ■ 閃き時のアニメーション変化
+#----------------------------------------------------------------------------
+  #--------------------------------------------------------------------------
+  # ● フレーム更新 (メインフェーズ ステップ 3 : 行動側アニメーション)
+  #--------------------------------------------------------------------------
+  alias update_phase4_step3_flash update_phase4_step3
+  def update_phase4_step3
+    # スキル名を表示する
+    if SysFlash::FLASH_SKILL_TEXT and @flash_skill_text
+      @help_window.visible = true
+      @flash_skill_text = false
+    end
+    update_phase4_step3_flash
+    # 閃きアニメーション表示
+    if @active_battler.flash_flg
+      if SysFlash::FLASH_ANIME
+        # 行動側アニメーションを変更
+        @active_battler.animation_id = SysFlash::FLASH_ANIMATION_ID
+        @flash_skill_text = true  # 閃きアニメーションの後にスキル名を表示する予約
+        # ステップ 3 に最移行
+        @phase4_step = 3
+      end
+      @active_battler.flash_flg = false       # 閃き終了
+    end
+  end
+end
