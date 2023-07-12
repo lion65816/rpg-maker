@@ -1,0 +1,5 @@
+* figure out text displaying (pictures?)
+* a simple attack menu (attack, magic, special, item)
+* figure out rows
+* item and magic submenus
+* atb gauge preliminaries

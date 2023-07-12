@@ -1,0 +1,1079 @@
+Trigger: Parallel Process
+Condition Switch: none
+
+@> Conditional Branch: Switch [0241:Menu is up] is OFF
+  @> Conditional Branch: Switch [0151] is OFF
+    @> Conditional Branch: Switch [0160] is OFF
+      @> Conditional Branch: Switch [0181] is ON
+        @> Control Variables: [0476] = 1 
+        @>
+       : Branch End
+      @> Conditional Branch: Switch [0260] is ON
+        @> Conditional Branch: Switch [0188] is OFF
+          @> Control Variables: [0476] = 1 
+          @>
+         : Branch End
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Control Switches: [0120] = OFF
+@> Control Switches: [0104] = OFF
+@> Control Switches: [0107] = OFF
+@> Control Switches: [0164] = OFF
+@> Conditional Branch: Switch [0001:Battle Mode] is OFF
+  @> Conditional Branch: Switch [0181] is ON
+    @> Conditional Branch: Switch [0421] is OFF
+      @> Conditional Branch: Switch [1035] is ON
+        @> Erase Picture: 3
+        @> Erase Picture: 4
+        @> Erase Picture: 6
+        @> Control Switches: [1035] = OFF
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @>
+ : Else
+  @> Control Switches: [1035] = ON
+  @>
+ : Branch End
+@> Control Variables: [0606] = Variable [0601]
+@> Control Variables: [0607] = Variable [0602]
+@> Control Variables: [0608] = Variable [0603]
+@> Control Variables: [0609] = Variable [0604]
+@> Control Variables: [0610] = Variable [0605]
+@> Control Variables: [0665] = Variable [0661]
+@> Control Variables: [0666] = Variable [0662]
+@> Control Variables: [0667] = Variable [0663]
+@> Control Variables: [0668] = Variable [0664]
+@> Comment: +++++++++++++ 予約動作があるときはキー入力より優先する +++++
+@> Control Variables: [1107..1109] = Variable ID [V[1106]]
+@> Control Variables: [1112..1114] = Variable ID [V[1111]]
+@> Control Variables: [1117..1119] = Variable ID [V[1116]]
+@> Control Variables: [1105] = Variable [1107]
+@> Control Variables: [1105] += Variable [1112]
+@> Control Variables: [1105] += Variable [1117]
+@> Conditional Branch: Variable [1105] == 0
+  @> Label: 2
+  @> Conditional Branch: Switch [0316] is ON
+    @> Control Variables: [0601] = Variable [2291]
+    @> Control Variables: [0602] = Variable [2292]
+    @> Control Variables: [0603] = Variable [2293]
+    @> Control Variables: [0604] = Variable [2294]
+    @> Control Variables: [0605] = Variable [2295]
+    @> Control Variables: [0661] = Variable [2296]
+    @> Control Variables: [0662] = Variable [2297]
+    @> Control Variables: [0663] = Variable [2298]
+    @> Control Variables: [0664] = Variable [2299]
+    @> Key Input Processing: [2296]
+    @> Key Input Processing: [2298]
+    @> Key Input Processing: [2299]
+    @> Key Input Processing: [2297]
+    @> Key Input Processing: [2291]
+    @> Key Input Processing: [2292]
+    @> Key Input Processing: [2293]
+    @> Key Input Processing: [2294]
+    @> Key Input Processing: [2295]
+    @> Conditional Branch: Variable [2291]  != 0
+      @> Conditional Branch: Variable [2291]  != Variable [0601]
+        @> Conditional Branch: Variable [2291] == Variable [0606]
+          @> Control Variables: [0601] = Variable [0606]
+          @> Conditional Branch: Switch [0079] is ON
+            @> Comment: キー入力途切れ補正
+            @>
+           : Branch End
+          @>
+         : Branch End
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [2292]  != 0
+      @> Conditional Branch: Variable [2292]  != Variable [0602]
+        @> Conditional Branch: Variable [2292] == Variable [0607]
+          @> Control Variables: [0602] = Variable [0607]
+          @> Conditional Branch: Switch [0079] is ON
+            @> Comment: キー入力途切れ補正
+            @>
+           : Branch End
+          @>
+         : Branch End
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [2293]  != 0
+      @> Conditional Branch: Variable [2293]  != Variable [0603]
+        @> Conditional Branch: Variable [2293] == Variable [0608]
+          @> Control Variables: [0603] = Variable [0608]
+          @> Conditional Branch: Switch [0079] is ON
+            @> Comment: キー入力途切れ補正
+            @>
+           : Branch End
+          @>
+         : Branch End
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [2294]  != 0
+      @> Conditional Branch: Variable [2294]  != Variable [0604]
+        @> Conditional Branch: Variable [2294] == Variable [0609]
+          @> Control Variables: [0604] = Variable [0609]
+          @> Conditional Branch: Switch [0079] is ON
+            @> Comment: キー入力途切れ補正
+            @>
+           : Branch End
+          @>
+         : Branch End
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [2295]  != 0
+      @> Conditional Branch: Variable [2295]  != Variable [0605]
+        @> Conditional Branch: Variable [2295] == Variable [0610]
+          @> Control Variables: [0605] = Variable [0610]
+          @> Conditional Branch: Switch [0079] is ON
+            @> Comment: キー入力途切れ補正
+            @>
+           : Branch End
+          @>
+         : Branch End
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [2296]  != 0
+      @> Conditional Branch: Variable [2296]  != Variable [0661]
+        @> Conditional Branch: Variable [2296] == Variable [0665]
+          @> Control Variables: [0661] = Variable [0665]
+          @> Conditional Branch: Switch [0079] is ON
+            @> Comment: キー入力途切れ補正
+            @>
+           : Branch End
+          @>
+         : Branch End
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [2297]  != 0
+      @> Conditional Branch: Variable [2297]  != Variable [0662]
+        @> Conditional Branch: Variable [2297] == Variable [0666]
+          @> Control Variables: [0662] = Variable [0666]
+          @> Conditional Branch: Switch [0079] is ON
+            @> Comment: キー入力途切れ補正
+            @>
+           : Branch End
+          @>
+         : Branch End
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [2298]  != 0
+      @> Conditional Branch: Variable [2298]  != Variable [0663]
+        @> Conditional Branch: Variable [2298] == Variable [0667]
+          @> Control Variables: [0663] = Variable [0667]
+          @> Conditional Branch: Switch [0079] is ON
+            @> Comment: キー入力途切れ補正
+            @>
+           : Branch End
+          @>
+         : Branch End
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [2299]  != 0
+      @> Conditional Branch: Variable [2299]  != Variable [0664]
+        @> Conditional Branch: Variable [2299] == Variable [0668]
+          @> Control Variables: [0664] = Variable [0668]
+          @> Conditional Branch: Switch [0079] is ON
+            @> Comment: キー入力途切れ補正
+            @>
+           : Branch End
+          @>
+         : Branch End
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @> Break Loop
+    @>
+   : Branch End
+  @> Label: 3
+  @> Key Input Processing: [0601]
+  @> Key Input Processing: [0602]
+  @> Key Input Processing: [0603]
+  @> Key Input Processing: [0604]
+  @> Key Input Processing: [0605]
+  @> Key Input Processing: [0661]
+  @> Key Input Processing: [0662]
+  @> Key Input Processing: [0663]
+  @> Key Input Processing: [0664]
+  @> Break Loop
+  @>
+ : Branch End
+@> Conditional Branch: Switch [0001:Battle Mode] is OFF
+  @> Conditional Branch: Switch [0196] is ON
+    @> Jump to Label: 2
+    @>
+   : Branch End
+  @> Conditional Branch: Switch [0131] is ON
+    @> Jump to Label: 2
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Conditional Branch: Variable [1107] == 0
+  @> Control Variables: [0661..0664] = 0 
+  @>
+ : Else
+  @> Control Variables: [1108] /= 10000 
+  @> Control Variables: [1109] %= 10000 
+  @> Conditional Branch: Variable [1108] < 20
+    @> Conditional Branch: Variable [1108] < 10
+      @> Control Switches: [0019] = OFF
+      @> Control Switches: [0112] = OFF
+      @>
+     : Else
+      @> Control Switches: [0104] = ON
+      @>
+     : Branch End
+    @>
+   : Else
+    @> Conditional Branch: Variable [1108] < 30
+      @> Control Switches: [0107] = ON
+      @>
+     : Else
+      @> Control Switches: [0019] = ON
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Control Variables: [1108] %= 10 
+  @> Comment: 予約された動作の自動実行
+  @> Control Variables: [1108] -= 5 
+  @> Control Variables: [0661..0664] = 0 
+  @> Conditional Branch: Variable [1108] <= -2
+    @> Control Variables: [0661] = 1 
+    @> Control Variables: [1108] += 3 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [1108] >= 2
+    @> Control Variables: [0662] = 4 
+    @> Control Variables: [1108] -= 3 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [1108] == 1
+    @> Control Variables: [0664] = 3 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [1108] == -1
+    @> Control Variables: [0663] = 2 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [1109] <= 1
+    @> Control Variables: Variable [1106] = 0 
+    @> Control Variables: [1106] %= 4998 
+    @> Control Variables: [1106] += 5001 
+    @>
+   : Else
+    @> Control Variables: Variable [1106] -= 1 
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Conditional Branch: Variable [1112] == 0
+  @> Control Variables: [0601..0603] = 0 
+  @>
+ : Else
+  @> Control Variables: [1113] /= 10000 
+  @> Control Variables: [1114] %= 10000 
+  @> Comment: 予約された動作の自動実行
+  @> Control Variables: [0601..0603] = Variable [1113]
+  @> Control Variables: [0601] /= 2 
+  @> Control Variables: [0602] /= 4 
+  @> Control Variables: [0603] /= 8 
+  @> Control Variables: [0601..0603] %= 2 
+  @> Control Variables: [0601] *= 5 
+  @> Control Variables: [0602] *= 6 
+  @> Control Variables: [0603] *= 7 
+  @> Conditional Branch: Variable [1114] <= 1
+    @> Control Variables: Variable [1111] = 0 
+    @> Control Variables: [1111] %= 4998 
+    @> Control Variables: [1111] += 5001 
+    @>
+   : Else
+    @> Control Variables: Variable [1111] -= 1 
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Conditional Branch: Variable [1117] == 0
+  @> Control Variables: [0604..0605] = 0 
+  @>
+ : Else
+  @> Control Variables: [1118] /= 10000 
+  @> Control Variables: [1119] %= 10000 
+  @> Comment: 予約された動作の自動実行
+  @> Control Variables: [0604..0605] = Variable [1118]
+  @> Conditional Branch: Variable [0604] < 10
+    @> Control Variables: [0604] = 0 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0604] >= 20
+    @> Control Variables: [0604] = 0 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0605] < 20
+    @> Control Variables: [0605] = 0 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [1119] <= 1
+    @> Control Variables: Variable [1116] = 0 
+    @> Control Variables: [1116] %= 4998 
+    @> Control Variables: [1116] += 5001 
+    @>
+   : Else
+    @> Control Variables: Variable [1116] -= 1 
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Loop
+  @> Break Loop
+  @>
+ : Repeat Above
+@> Comment: +++++++++++++++++++++++++++++++++++++++++++++ キー処理 +++++
+@> Conditional Branch: Variable [0661] == 0
+  @> Control Variables: [0669] = 0 
+  @>
+ : Else
+  @> Conditional Branch: Variable [0661] == Variable [0665]
+    @> Control Variables: [0669] += 1 
+    @>
+   : Else
+    @> Control Variables: [0669] = 1 
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Conditional Branch: Variable [0662] == 0
+  @> Control Variables: [0670] = 0 
+  @>
+ : Else
+  @> Conditional Branch: Variable [0662] == Variable [0666]
+    @> Control Variables: [0670] += 1 
+    @>
+   : Else
+    @> Control Variables: [0670] = 1 
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Conditional Branch: Variable [0663] == 0
+  @> Control Variables: [0671] = 0 
+  @>
+ : Else
+  @> Conditional Branch: Variable [0663] == Variable [0667]
+    @> Control Variables: [0671] += 1 
+    @>
+   : Else
+    @> Control Variables: [0671] = 1 
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Conditional Branch: Variable [0664] == 0
+  @> Control Variables: [0672] = 0 
+  @>
+ : Else
+  @> Conditional Branch: Variable [0664] == Variable [0668]
+    @> Control Variables: [0672] += 1 
+    @>
+   : Else
+    @> Control Variables: [0672] = 1 
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Control Variables: [0673] = Variable [0661]
+@> Control Variables: [0673] += Variable [0662]
+@> Control Variables: [0674] = Variable [0663]
+@> Control Variables: [0674] += Variable [0664]
+@> Control Variables: [0673..0674] *= 2 
+@> Control Variables: [0673..0674] -= 5 
+@> Control Variables: [0673..0674] %= 5 
+@> Control Variables: [0673] /= 3 
+@> Conditional Branch: Variable [0476] >= 1
+  @> Conditional Branch: Switch [0421] is OFF
+    @> Conditional Branch: Variable [1105] == 0
+      @> Control Variables: [0601] = 5 
+      @> Control Variables: [0602] = 6 
+      @> Control Variables: [0603] = 7 
+      @> Control Variables: [0606] = Variable [0601]
+      @> Control Variables: [0607] = Variable [0602]
+      @> Control Variables: [0608] = Variable [0603]
+      @> Control Variables: [0611..0620] = 2 
+      @> Control Variables: [0639..0640] = 2 
+      @> Control Variables: [0630] = 2 
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Conditional Branch: Variable [0601] == 0
+  @> Control Variables: [0611] = 0 
+  @>
+ : Else
+  @> Conditional Branch: Variable [0601] == Variable [0606]
+    @> Control Variables: [0611] += 1 
+    @>
+   : Else
+    @> Control Variables: [0611] = 1 
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Conditional Branch: Variable [0602] == 0
+  @> Control Variables: [0612] = 0 
+  @>
+ : Else
+  @> Conditional Branch: Variable [0602] == Variable [0607]
+    @> Control Variables: [0612] += 1 
+    @>
+   : Else
+    @> Control Variables: [0612] = 1 
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Conditional Branch: Variable [0603] == 0
+  @> Control Variables: [0613] = 0 
+  @>
+ : Else
+  @> Conditional Branch: Variable [0603] == Variable [0608]
+    @> Control Variables: [0613] += 1 
+    @>
+   : Else
+    @> Control Variables: [0613] = 1 
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Conditional Branch: Variable [0476] >= 1
+  @> Control Variables: [0609] = Variable [0604]
+  @> Control Variables: [0610] = Variable [0605]
+  @>
+ : Else
+  @> Conditional Branch: Variable [0604] == 0
+    @> Control Variables: [0614] = 0 
+    @>
+   : Else
+    @> Conditional Branch: Variable [0604] == Variable [0609]
+      @> Control Variables: [0614] += 1 
+      @>
+     : Else
+      @> Control Variables: [0614] = 1 
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0605] == 0
+    @> Control Variables: [0615] = 0 
+    @>
+   : Else
+    @> Conditional Branch: Variable [0605] == Variable [0610]
+      @> Control Variables: [0615] += 1 
+      @>
+     : Else
+      @> Control Variables: [0615] = 1 
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Comment: ※メッセージ速度調節
+@> Conditional Branch: Switch [0131] is ON
+  @> Change Actor Name: [], ''
+  @> Conditional Branch: Variable [0644] <= 7
+    @> Conditional Branch: Variable [0601] == Variable [0644]
+      @> Jump to Label: 11
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0602] == Variable [0644]
+      @> Jump to Label: 11
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0603] == Variable [0644]
+      @> Jump to Label: 11
+      @>
+     : Branch End
+    @>
+   : Else
+    @> Conditional Branch: Variable [0604] == Variable [0644]
+      @> Jump to Label: 11
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0605] == Variable [0644]
+      @> Jump to Label: 11
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Comment: ∇通常速度
+  @> Conditional Branch: Variable [0635] == 1
+    @> Change Actor Name: [\s[2]], '\s[1]'
+    @> Change Actor Name: [\s[5]･･･], '\s[4]･･･'
+    @>
+   : Else
+    @> Conditional Branch: Variable [0635] == 2
+      @> Change Actor Name: [\s[2]], '\s[2]'
+      @> Change Actor Name: [\s[5]･･･], '\s[5]･･･'
+      @>
+     : Else
+      @> Change Actor Name: [\s[2]], '\s[3]'
+      @> Change Actor Name: [\s[5]･･･], '\s[8]･･･'
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Jump to Label: 12
+  @> Label: 11
+  @> Comment: ∇メッセージ早送り
+  @> Change Actor Name: [\s[2]], '\s[1]'
+  @> Change Actor Name: [\s[5]･･･], '\s[1]･･･'
+  @>
+ : Branch End
+@> Label: 12
+@> Conditional Branch: Switch [0260] is ON
+  @> Conditional Branch: Switch [0241:Menu is up] is OFF
+    @> Jump to Label: 14
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Comment: ※街中ダッシュ
+@> Comment: 　使用キーは「Shift」
+@> Conditional Branch: Switch [0181] is OFF
+  @> Conditional Branch: Variable [0673] == 0
+    @> Conditional Branch: Variable [0674] == 0
+      @> Conditional Branch: Switch [0182] is ON
+        @> Control Switches: [0182] = OFF
+        @> Control Switches: [0142] = ON
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0627] <= 7
+    @> Conditional Branch: Variable [0601] == Variable [0627]
+      @> Control Switches: [0182] = ON
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0602] == Variable [0627]
+      @> Control Switches: [0182] = ON
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0603] == Variable [0627]
+      @> Control Switches: [0182] = ON
+      @>
+     : Branch End
+    @>
+   : Else
+    @> Conditional Branch: Variable [0604] == Variable [0627]
+      @> Control Switches: [0182] = ON
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0605] == Variable [0627]
+      @> Control Switches: [0182] = ON
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @>
+ : Else
+  @> Control Switches: [0182] = OFF
+  @>
+ : Branch End
+@> Comment: ※障害物すり抜け（デバッグ用）
+@> Comment: 　使用キーは「.」
+@> Conditional Branch: Switch [0079] is ON
+  @> Conditional Branch: Variable [0649] <= 7
+    @> Conditional Branch: Variable [0601] == Variable [0649]
+      @> Control Switches: [0120] = ON
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0602] == Variable [0649]
+      @> Control Switches: [0120] = ON
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0603] == Variable [0649]
+      @> Control Switches: [0120] = ON
+      @>
+     : Branch End
+    @>
+   : Else
+    @> Conditional Branch: Variable [0604] == Variable [0649]
+      @> Control Switches: [0120] = ON
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0605] == Variable [0649]
+      @> Control Switches: [0120] = ON
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Comment: ※Check(調べる)キー
+@> Comment: 　デフォルト使用キーは「決定」
+@> Loop
+  @> Control Variables: [0616] += 1 
+  @> Conditional Branch: Variable [0642] <= 7
+    @> Conditional Branch: Variable [0601] == Variable [0642]
+      @> Break Loop
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0602] == Variable [0642]
+      @> Break Loop
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0603] == Variable [0642]
+      @> Break Loop
+      @>
+     : Branch End
+    @>
+   : Else
+    @> Conditional Branch: Variable [0604] == Variable [0642]
+      @> Break Loop
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0605] == Variable [0642]
+      @> Break Loop
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Control Variables: [0616] = 0 
+  @> Break Loop
+  @>
+ : Repeat Above
+@> Comment: ※メニューキー
+@> Comment: 　デフォルト使用キー「0」の他任意
+@> Loop
+  @> Control Variables: [0617] += 1 
+  @> Conditional Branch: Variable [0643] >= 1
+    @> Conditional Branch: Variable [0643] <= 7
+      @> Conditional Branch: Variable [0601] == Variable [0643]
+        @> Break Loop
+        @>
+       : Branch End
+      @> Conditional Branch: Variable [0602] == Variable [0643]
+        @> Break Loop
+        @>
+       : Branch End
+      @> Conditional Branch: Variable [0603] == Variable [0643]
+        @> Break Loop
+        @>
+       : Branch End
+      @>
+     : Else
+      @> Conditional Branch: Variable [0604] == Variable [0643]
+        @> Break Loop
+        @>
+       : Branch End
+      @> Conditional Branch: Variable [0605] == Variable [0643]
+        @> Break Loop
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Control Variables: [0617] = 0 
+  @> Break Loop
+  @>
+ : Repeat Above
+@> Comment: ※へるぷキー
+@> Comment: 　デフォルト使用キーは「/」
+@> Loop
+  @> Control Variables: [0618] += 1 
+  @> Conditional Branch: Variable [0646] <= 7
+    @> Conditional Branch: Variable [0601] == Variable [0645]
+      @> Break Loop
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0602] == Variable [0645]
+      @> Break Loop
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0603] == Variable [0645]
+      @> Break Loop
+      @>
+     : Branch End
+    @>
+   : Else
+    @> Conditional Branch: Variable [0604] == Variable [0645]
+      @> Break Loop
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0605] == Variable [0645]
+      @> Break Loop
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Control Variables: [0618] = 0 
+  @> Break Loop
+  @>
+ : Repeat Above
+@> Comment: ※ページＲキー
+@> Comment: 　デフォルト使用キーは「+」
+@> Loop
+  @> Control Variables: [0619] += 1 
+  @> Conditional Branch: Variable [0645] <= 7
+    @> Conditional Branch: Variable [0601] == Variable [0646]
+      @> Break Loop
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0602] == Variable [0646]
+      @> Break Loop
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0603] == Variable [0646]
+      @> Break Loop
+      @>
+     : Branch End
+    @>
+   : Else
+    @> Conditional Branch: Variable [0604] == Variable [0646]
+      @> Break Loop
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0605] == Variable [0646]
+      @> Break Loop
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Control Variables: [0619] = 0 
+  @> Break Loop
+  @>
+ : Repeat Above
+@> Comment: ※ページＬキー
+@> Comment: 　デフォルト使用キーは「-」
+@> Loop
+  @> Control Variables: [0620] += 1 
+  @> Conditional Branch: Variable [0645] <= 7
+    @> Conditional Branch: Variable [0601] == Variable [0647]
+      @> Break Loop
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0602] == Variable [0647]
+      @> Break Loop
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0603] == Variable [0647]
+      @> Break Loop
+      @>
+     : Branch End
+    @>
+   : Else
+    @> Conditional Branch: Variable [0604] == Variable [0647]
+      @> Break Loop
+      @>
+     : Branch End
+    @> Conditional Branch: Variable [0605] == Variable [0647]
+      @> Break Loop
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Control Variables: [0620] = 0 
+  @> Break Loop
+  @>
+ : Repeat Above
+@> Comment: ※HoldキーⅠ
+@> Comment: 　デフォルト使用キーは「X」
+@> Loop
+  @> Control Variables: [0639] += 1 
+  @> Conditional Branch: Variable [0622] >= 1
+    @> Conditional Branch: Variable [0622] <= 7
+      @> Conditional Branch: Variable [0601] == Variable [0622]
+        @> Break Loop
+        @>
+       : Branch End
+      @> Conditional Branch: Variable [0602] == Variable [0622]
+        @> Break Loop
+        @>
+       : Branch End
+      @> Conditional Branch: Variable [0603] == Variable [0622]
+        @> Break Loop
+        @>
+       : Branch End
+      @>
+     : Else
+      @> Conditional Branch: Variable [0604] == Variable [0622]
+        @> Break Loop
+        @>
+       : Branch End
+      @> Conditional Branch: Variable [0605] == Variable [0622]
+        @> Break Loop
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Control Variables: [0639] = 0 
+  @> Break Loop
+  @>
+ : Repeat Above
+@> Comment: ※HoldキーⅡ
+@> Comment: 　デフォルト使用キーなし
+@> Loop
+  @> Control Variables: [0640] += 1 
+  @> Conditional Branch: Variable [0623] >= 1
+    @> Conditional Branch: Variable [0623] <= 7
+      @> Conditional Branch: Variable [0601] == Variable [0623]
+        @> Break Loop
+        @>
+       : Branch End
+      @> Conditional Branch: Variable [0602] == Variable [0623]
+        @> Break Loop
+        @>
+       : Branch End
+      @> Conditional Branch: Variable [0603] == Variable [0623]
+        @> Break Loop
+        @>
+       : Branch End
+      @>
+     : Else
+      @> Conditional Branch: Variable [0604] == Variable [0623]
+        @> Break Loop
+        @>
+       : Branch End
+      @> Conditional Branch: Variable [0605] == Variable [0623]
+        @> Break Loop
+        @>
+       : Branch End
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Control Variables: [0640] = 0 
+  @> Break Loop
+  @>
+ : Repeat Above
+@> Label: 14
+@> Conditional Branch: Switch [0171] is ON
+  @> Key Input Processing: [0650]
+  @> Conditional Branch: Variable [0650] == 10
+    @> Control Switches: [0172] = ON
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Comment: ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+@> Comment: ※地名表示
+@> Comment: 
+@> Conditional Branch: Switch [0422] is ON
+  @> Show Picture: 50, 'RW0_blackout', (160,120), 100%, 0%, M6
+  @> Control Switches: [0422] = OFF
+  @>
+ : Branch End
+@> Conditional Branch: Switch [0421] is ON
+  @> Control Variables: [0377] = 0 
+  @>
+ : Branch End
+@> Conditional Branch: Variable [0377] >= 1
+  @> Conditional Branch: Variable [0377] == 61
+    @> Move Picture: 47, (132,212), 100%, 100%, @1.0s
+    @> Move Picture: 48, (132,212), 100%, 100%, @1.0s
+    @> Conditional Branch: Variable [1958] == 57
+      @> Move Picture: 49, (132,212), 100%, 100%, @1.0s
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0377] == 1
+    @> Conditional Branch: Variable [1958] == 57
+      @> Control Variables: [1978] = 1 
+      @>
+     : Branch End
+    @>
+   : Branch End
+  @> Control Variables: [0377] -= 1 
+  @>
+ : Branch End
+@> Comment: ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+@> Comment: ※VTP/MTP経時回復処理
+@> Comment: 
+@> Conditional Branch: Switch [0001:Battle Mode] is OFF
+  @> Jump to Label: 15
+  @> Conditional Branch: Switch [0220] is OFF
+    @> Jump to Label: 15
+    @>
+   : Branch End
+  @> Conditional Branch: Switch [0181] is ON
+    @> Jump to Label: 15
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Control Variables: [1091] = Variable [0966]
+@> Control Variables: [1092] = Variable [0967]
+@> Control Variables: [1091..1092] %= 432 
+@> Conditional Branch: Variable [1091] >= 1
+  @> Control Variables: [1091] += 2 
+  @>
+ : Branch End
+@> Conditional Branch: Variable [1092] >= 1
+  @> Control Variables: [1092] += 2 
+  @>
+ : Branch End
+@> Control Variables: [1091..1092] /= 8 
+@> Control Variables: [1085] += Variable [1091]
+@> Control Variables: [1086] += Variable [1092]
+@> Conditional Branch: Variable [1085] >= 600
+  @> Control Variables: [1087] = Variable [1085]
+  @> Control Variables: [1087] /= 600 
+  @> Control Variables: [1085] %= 600 
+  @> Control Variables: [0189] += Variable [1087]
+  @>
+ : Branch End
+@> Conditional Branch: Variable [1086] >= 600
+  @> Control Variables: [1087] = Variable [1086]
+  @> Control Variables: [1087] /= 600 
+  @> Control Variables: [1086] %= 600 
+  @> Control Variables: [0190] += Variable [1087]
+  @>
+ : Branch End
+@> Label: 15
+@> Comment: ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+@> Comment: ※乱数処理
+@> Comment: 
+@> Control Variables: [2104] = Variable ID [V[2107]]
+@> Control Variables: [2107] -= 3500 
+@> Control Variables: [2107] %= 90 
+@> Control Variables: [2107] += 3501 
+@> Control Variables: [2105] = Variable ID [V[2107]]
+@> Control Variables: [2104] %= Variable [2109]
+@> Control Variables: [2104] *= Variable [2108]
+@> Control Variables: [2105] /= Variable [2109]
+@> Control Variables: [2104] += Variable [2105]
+@> Conditional Branch: Variable [2109] == 10
+  @> Control Variables: [2109] = 1000000 
+  @> Control Variables: [2108] = 1 
+  @> Control Variables: [2107] -= 3500 
+  @> Control Variables: [2107] %= 90 
+  @> Control Variables: [2107] += 3501 
+  @>
+ : Else
+  @> Control Variables: [2109] /= 10 
+  @> Control Variables: [2108] *= 10 
+  @>
+ : Branch End
+@> Control Variables: Variable [2110] = Variable [2104]
+@> Control Variables: [2110] -= 1 
+@> Control Variables: [2110] %= 20 
+@> Control Variables: [2110] += 2120 
+@> Control Variables: [2101] %= 20 
+@> Control Variables: [2101] += 2121 
+@> Comment: ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
+@> Control Variables: [0593] += 1 
+@> Control Variables: [0593] %= 5 
+@> Conditional Branch: Variable [0593] == 1
+  @> Conditional Branch: Variable [0611] >= 554400
+    @> Control Variables: [0611] -= 277200 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0612] >= 554400
+    @> Control Variables: [0612] -= 277200 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0613] >= 554400
+    @> Control Variables: [0613] -= 277200 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0614] >= 554400
+    @> Control Variables: [0614] -= 277200 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0615] >= 554400
+    @> Control Variables: [0615] -= 277200 
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Conditional Branch: Variable [0593] == 2
+  @> Conditional Branch: Variable [0616] >= 554400
+    @> Control Variables: [0616] -= 277200 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0617] >= 554400
+    @> Control Variables: [0617] -= 277200 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0618] >= 554400
+    @> Control Variables: [0618] -= 277200 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0619] >= 554400
+    @> Control Variables: [0619] -= 277200 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0620] >= 554400
+    @> Control Variables: [0620] -= 277200 
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Conditional Branch: Variable [0593] == 3
+  @> Conditional Branch: Variable [0669] >= 554400
+    @> Control Variables: [0669] -= 277200 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0670] >= 554400
+    @> Control Variables: [0670] -= 277200 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0671] >= 554400
+    @> Control Variables: [0671] -= 277200 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0672] >= 554400
+    @> Control Variables: [0672] -= 277200 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0677] >= 554400
+    @> Control Variables: [0677] -= 277200 
+    @>
+   : Branch End
+  @> Conditional Branch: Variable [0678] >= 554400
+    @> Control Variables: [0678] -= 277200 
+    @>
+   : Branch End
+  @>
+ : Branch End
+@> Conditional Branch: Variable [0593] == 4
+  @>
+ : Branch End
+@> Conditional Branch: Variable [0476] >= 1
+  @> Control Variables: [0476] -= 1 
+  @>
+ : Branch End

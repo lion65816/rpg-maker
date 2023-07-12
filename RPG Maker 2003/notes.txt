@@ -1,0 +1,5 @@
+* open ended scenario, roughly 25 quests?
+* 10 recruitable characters, can have up to 5 at once.
+
+battle system specifications:
+?

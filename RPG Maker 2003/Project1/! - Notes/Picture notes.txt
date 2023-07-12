@@ -1,0 +1,15 @@
+Number:
+* If a picture number is already set, setting it again will change that pic.
+* The higher the picture number, the highest layer the picture will be.
+
+Display Position:
+* The display position base number is the center of the screen.
+* Constant: The location is specified directly.
+* Variable: Specified by the value of the variable.
+* Range is X: -640 to 960
+           Y: -480 to 720
+* The display position is set in pixels with X=0,Y=0 being the upper left.
+
+Scroll Picture with Map:
+* The picture always appears at the same position on the game screen, regardless of the scrolling of the screen.
+* However, if you check the box "Scroll Picture with Map," the picture image will move as the screen scrolls.
